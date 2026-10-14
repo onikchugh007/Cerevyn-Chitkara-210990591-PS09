@@ -15,7 +15,7 @@
 | **Project Title** | Adaptive Memory Matching Game (Synapse Engine / MEMEMIND) |
 | **Repository Name** | `Cerevyn-Chitkara-210990591-PS09` |
 | **Evaluated Release Tag** | `v1.0.0` |
-| **Evaluated Commit Hash** | `862d359` (first commit) |
+| **Evaluated Commit Hash** | `862d359` |
 
 ---
 
