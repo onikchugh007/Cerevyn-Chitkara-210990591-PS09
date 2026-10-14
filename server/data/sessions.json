@@ -1,0 +1,54 @@
+[
+  {
+    "id": "sess_1792009742501_3ozvh6",
+    "timestamp": "2026-10-14T20:29:02.501Z",
+    "seed": "S2",
+    "difficulty": "standard",
+    "moves": 20,
+    "pairs": 8,
+    "elapsedSeconds": 40,
+    "metrics": {
+      "theoreticalMinMoves": 8,
+      "actualMoves": 20,
+      "pairs": 8,
+      "elapsedSeconds": 40,
+      "efficiency": 40,
+      "movesPerPair": 2.5,
+      "timePerPairSeconds": 5
+    },
+    "adaptation": {
+      "nextDifficulty": "standard",
+      "action": "MAINTAIN",
+      "ruleId": "RULE_MAINTAIN_STANDARD",
+      "reasonSummary": "😐 MID TIER DETECTED",
+      "detailedExplanation": "Maintaining Dank Meme Matrix (4×4). Your performance (20 moves, 40s, 40% efficiency) is within baseline. Need <= 14 moves and <35s to ascend to Gigachad status!"
+    },
+    "clientEventsSummary": null
+  },
+  {
+    "id": "sess_1792009742459_40vl1x",
+    "timestamp": "2026-10-14T20:29:02.459Z",
+    "seed": "S1",
+    "difficulty": "standard",
+    "moves": 10,
+    "pairs": 8,
+    "elapsedSeconds": 20,
+    "metrics": {
+      "theoreticalMinMoves": 8,
+      "actualMoves": 10,
+      "pairs": 8,
+      "elapsedSeconds": 20,
+      "efficiency": 80,
+      "movesPerPair": 1.25,
+      "timePerPairSeconds": 2.5
+    },
+    "adaptation": {
+      "nextDifficulty": "advanced",
+      "action": "PROMOTE",
+      "ruleId": "RULE_PROMOTION_OVERCLOCK",
+      "reasonSummary": "🏆 GIGACHAD ASCENSION (200 IQ)",
+      "detailedExplanation": "Promoted to Gigachad Galaxy Brain (6×6, 18 pairs). You achieved 80% efficiency (10 moves vs theoretical min 8) and finished in 20s (Threshold: <= 14 moves & <= 35s). Certified Meme Lord!"
+    },
+    "clientEventsSummary": null
+  }
+]

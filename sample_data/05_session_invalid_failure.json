@@ -1,0 +1,20 @@
+{
+  "scenario": "Scenario 5: Failure Behavior - Missing Required Metric Parameters",
+  "request": {
+    "method": "POST",
+    "endpoint": "/api/game/session",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "seed": "DOGE-01",
+      "difficulty": "standard"
+    }
+  },
+  "expectedOutput": {
+    "statusCode": 400,
+    "body": {
+      "error": "Missing required session metrics: moves and elapsedSeconds"
+    }
+  }
+}

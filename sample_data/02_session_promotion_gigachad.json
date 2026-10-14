@@ -1,0 +1,41 @@
+{
+  "scenario": "Scenario 2: Normal Behavior - Gigachad Promotion Trigger (Moves <= 14 & Time <= 35s)",
+  "request": {
+    "method": "POST",
+    "endpoint": "/api/game/session",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "seed": "DOGE-01",
+      "difficulty": "standard",
+      "moves": 12,
+      "pairs": 8,
+      "elapsedSeconds": 28.5,
+      "clientEvents": {
+        "rapidClicksRejected": 1,
+        "duplicateClicksIgnored": 0
+      }
+    }
+  },
+  "expectedOutput": {
+    "statusCode": 201,
+    "body": {
+      "success": true,
+      "adaptation": {
+        "previousDifficulty": "standard",
+        "nextDifficulty": "advanced",
+        "action": "PROMOTE",
+        "ruleId": "RULE_PROMOTION_OVERCLOCK",
+        "reasonSummary": "🏆 GIGACHAD ASCENSION (200 IQ)"
+      },
+      "metrics": {
+        "theoreticalMinMoves": 8,
+        "actualMoves": 12,
+        "pairs": 8,
+        "elapsedSeconds": 28.5,
+        "efficiency": 67
+      }
+    }
+  }
+}

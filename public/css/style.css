@@ -1,0 +1,1169 @@
+/* ==========================================================================
+   MEMEMIND // ARCADE HALL OF FAME MEMORY MATCH
+   Vibrant Themed Environment & High-Gloss Arcade Cards
+   ========================================================================== */
+
+:root {
+  /* Scenic Palette */
+  --sky-dark: #0f0926;
+  --sky-mid: #251247;
+  --sky-light: #481d68;
+  --skyline-purple: #1e1038;
+  --mountain-deep: #160b2e;
+  --grid-line: rgba(147, 51, 234, 0.25);
+
+  /* Arcade Cabinet & Stage Palette */
+  --cabinet-bg: #110d24;
+  --cabinet-border: #2a1f4e;
+  --cabinet-trim: #3b286d;
+  --marquee-gold: #fbbf24;
+  --marquee-glow: 0 0 20px rgba(251, 191, 36, 0.6);
+
+  /* Neon Accents */
+  --neon-cyan: #00f2fe;
+  --neon-pink: #f43f5e;
+  --neon-purple: #a855f7;
+  --neon-emerald: #10b981;
+  --neon-amber: #f59e0b;
+
+  /* Card Face Colors */
+  --card-back-base: linear-gradient(135deg, #181236 0%, #291854 50%, #150f30 100%);
+  --card-back-border: rgba(0, 242, 254, 0.45);
+  --card-front-border: rgba(255, 255, 255, 0.8);
+
+  /* Typography */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* Sizing & Transitions */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-flip: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(180deg, var(--sky-dark) 0%, var(--sky-mid) 40%, var(--sky-light) 80%, #1a0f30 100%);
+  color: #f8fafc;
+  font-family: var(--font-display);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+  user-select: none;
+}
+
+/* ==========================================================================
+   Scenic Background Layers (Aurora Mountains & Cyber Space Atmosphere)
+   ========================================================================== */
+.arcade-scene-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background-image: 
+    linear-gradient(to bottom, rgba(8, 4, 20, 0.28) 0%, rgba(10, 6, 24, 0.48) 50%, rgba(6, 2, 16, 0.92) 100%),
+    url('/images/scenic_aurora_bg.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  filter: saturate(1.15) brightness(0.92);
+  transition: background-image 0.6s ease-in-out, filter 0.6s ease;
+}
+
+.scene-aurora-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52%;
+  background: radial-gradient(ellipse 75% 55% at 50% 15%, rgba(0, 242, 254, 0.2) 0%, rgba(168, 85, 247, 0.12) 40%, transparent 80%);
+  animation: auroraBreathe 7s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes auroraBreathe {
+  0% { opacity: 0.5; transform: scaleY(0.94); }
+  50% { opacity: 0.95; transform: scaleY(1.06); }
+  100% { opacity: 0.65; transform: scaleY(0.98); }
+}
+
+.scene-ground-fog {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: linear-gradient(to top, rgba(6, 2, 16, 0.95) 0%, rgba(6, 2, 16, 0.5) 60%, transparent 100%);
+  pointer-events: none;
+}
+
+
+/* Floating Twinkling Sparkles */
+.ambient-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  color: #fef08a;
+  opacity: 0.7;
+  animation: twinkle linear infinite alternate;
+  text-shadow: 0 0 8px rgba(254, 240, 138, 0.8);
+}
+
+@keyframes twinkle {
+  0% { transform: scale(0.6) translateY(0); opacity: 0.3; }
+  50% { opacity: 0.9; }
+  100% { transform: scale(1.1) translateY(-25px); opacity: 0.4; }
+}
+
+/* ==========================================================================
+   Top Arcade HUD & Action Controls
+   ========================================================================== */
+.arcade-top-nav {
+  position: relative;
+  z-index: 20;
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.top-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+/* Glossy 3D Round Push Buttons */
+.btn-arcade-round {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+.btn-arcade-round.red {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 60%, #b91c1c 100%);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.btn-arcade-round.amber {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #b45309 100%);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.btn-arcade-round.cyan {
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 60%, #0369a1 100%);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.btn-arcade-round.purple {
+  background: linear-gradient(135deg, #c084fc 0%, #a855f7 60%, #7e22ce 100%);
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.btn-arcade-round.indigo {
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 60%, #4338ca 100%);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.btn-arcade-round.emerald {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 60%, #047857 100%);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.btn-arcade-round:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.btn-arcade-round:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.btn-arcade-round.muted {
+  filter: grayscale(0.85);
+  opacity: 0.7;
+}
+
+
+/* Scoreboard HUD Banner */
+.arcade-scoreboard-banner {
+  display: flex;
+  background: linear-gradient(135deg, #1e1338 0%, #2e1a52 100%);
+  border: 2px solid rgba(168, 85, 247, 0.5);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+.banner-unit {
+  padding: 0.45rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  min-width: 68px;
+}
+
+.banner-unit.brand {
+  background: rgba(147, 51, 234, 0.25);
+  border-right-color: rgba(147, 51, 234, 0.4);
+}
+
+.banner-unit:last-child {
+  border-right: none;
+}
+
+.banner-unit.active {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--neon-emerald);
+}
+
+.banner-unit span {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.banner-unit small {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   Main Arcade Stage / Cabinet Arena
+   ========================================================================== */
+.arcade-stage-container {
+  position: relative;
+  z-index: 10;
+  max-width: 960px;
+  margin: 0 auto 2.5rem;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Grand Marquee Header */
+.marquee-assembly {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: -4px;
+}
+
+.marquee-sign {
+  width: 100%;
+  background: linear-gradient(180deg, #2b184c 0%, #170d2c 100%);
+  border: 4px solid #4a287e;
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 1rem 1.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.marquee-title-box {
+  text-align: center;
+  flex: 1;
+}
+
+.marquee-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
+  margin-bottom: 2px;
+}
+
+.marquee-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.7rem;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, #fff 0%, #fef08a 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(245, 158, 11, 0.5));
+}
+
+.marquee-bulbs {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: #fef08a;
+  box-shadow: 0 0 10px #fef08a, 0 0 20px #f59e0b;
+  animation: bulbBlink 1.5s infinite alternate;
+}
+
+@keyframes bulbBlink {
+  0% { opacity: 0.5; filter: drop-shadow(0 0 4px #f59e0b); }
+  100% { opacity: 1; filter: drop-shadow(0 0 12px #fef08a); }
+}
+
+/* Digital Clock & Scoreboard Pill */
+.arcade-digital-clock-pill {
+  display: flex;
+  background: #090517;
+  border: 2px solid #5b3096;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  margin-top: -6px;
+  z-index: 5;
+}
+
+.clock-box {
+  padding: 0.35rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  min-width: 90px;
+}
+
+.clock-box.time {
+  background: #1e133d;
+  color: var(--neon-cyan);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.clock-box.score {
+  background: #27144d;
+  color: var(--neon-amber);
+}
+
+.clock-box span {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.1;
+}
+
+.clock-box small {
+  font-size: 0.58rem;
+  font-weight: 700;
+  opacity: 0.8;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* Arcade Cabinet Body Housing the Matrix */
+.arcade-cabinet-body {
+  width: 100%;
+  background: var(--cabinet-bg);
+  border: 4px solid #4a287e;
+  border-top: none;
+  border-bottom: none;
+  padding: 1.75rem 1.5rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+/* Subtle Vertical Wood / Metallic Paneling Lines */
+.arcade-cabinet-body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(147, 51, 234, 0.05) 60px, rgba(147, 51, 234, 0.05) 62px);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Matrix Grid & 3D Cards
+   ========================================================================== */
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.card-grid.grid-3x4 {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 660px;
+}
+
+.card-grid.grid-4x4 {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 720px;
+}
+
+.card-grid.grid-6x6 {
+  grid-template-columns: repeat(6, 1fr);
+  max-width: 860px;
+  gap: 0.65rem;
+}
+
+/* 3D Card Container */
+.memory-card.arcade-card {
+  position: relative;
+  aspect-ratio: 1 / 1.15;
+  perspective: 1000px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--transition-fast);
+}
+
+.memory-card.arcade-card:hover:not(.flipped):not(.matched):not(.locked) {
+  transform: translateY(-5px) scale(1.03);
+}
+
+.memory-card.arcade-card:active:not(.flipped):not(.matched):not(.locked) {
+  transform: scale(0.96);
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--transition-flip);
+  transform-style: preserve-3d;
+}
+
+.memory-card.flipped .card-inner,
+.memory-card.matched .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Card Faces */
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ==========================================================================
+   Card Back Face: High-Gloss Holographic Arcade Collectible Card
+   ========================================================================== */
+.card-face.back.arcade-back-face {
+  transform: rotateY(0deg);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: var(--card-back-base);
+  border: 2.5px solid var(--card-back-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* Hologram Shimmer Ribbon */
+.card-face.back.arcade-back-face::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed rgba(0, 242, 254, 0.3);
+  border-radius: calc(var(--radius-md) - 4px);
+  pointer-events: none;
+}
+
+.card-back-pattern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 2;
+}
+
+.card-back-emblem {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.8));
+  color: var(--neon-cyan);
+}
+
+.card-back-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+}
+
+.card-back-sub {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   Card Front Face: Pure Meme Photo (Full-Bleed Image)
+   ========================================================================== */
+.card-face.front.arcade-front-face {
+  transform: rotateY(180deg);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: #090614;
+  border: 3px solid var(--meme-glow-color, #00f2fe);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.memory-card.flipped .card-face.front,
+.memory-card.matched .card-face.front {
+  display: flex !important;
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+}
+
+.memory-card.flipped .card-face.back,
+.memory-card.matched .card-face.back {
+  display: none !important;
+}
+
+.card-photo-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.meme-full-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-smooth);
+}
+
+.memory-card.flipped .meme-full-img {
+  transform: scale(1.03);
+}
+
+/* Bottom Label Pill */
+.card-photo-badge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.45rem 0.35rem 0.3rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.card-photo-title {
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 95%;
+}
+
+.grid-6x6 .card-photo-title {
+  font-size: 0.58rem;
+}
+
+/* Matched Card State: Golden Victory Shimmer */
+.memory-card.matched .card-face.front.arcade-front-face {
+  border-color: #10b981;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.75), inset 0 0 15px rgba(16, 185, 129, 0.35);
+  animation: matchPulse 0.5s ease-out;
+}
+
+@keyframes matchPulse {
+  0% { transform: rotateY(180deg) scale(1); }
+  50% { transform: rotateY(180deg) scale(1.08); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+/* Mismatch Shake Animation */
+.memory-card.mismatch .card-inner {
+  animation: mismatchWobble 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.memory-card.mismatch .card-face.front {
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.65);
+}
+
+@keyframes mismatchWobble {
+  10%, 90% { transform: rotateY(180deg) translate3d(-3px, 0, 0); }
+  20%, 80% { transform: rotateY(180deg) translate3d(3px, 0, 0); }
+  30%, 50%, 70% { transform: rotateY(180deg) translate3d(-4px, 0, 0); }
+  40%, 60% { transform: rotateY(180deg) translate3d(4px, 0, 0); }
+}
+
+/* ==========================================================================
+   Cabinet Lower Control Deck
+   ========================================================================== */
+.arcade-control-deck {
+  width: 100%;
+  background: #170f30;
+  border: 4px solid #4a287e;
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.deck-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.arcade-select {
+  background: #0d0720;
+  color: #ffffff;
+  border: 1.5px solid #6d28d9;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.arcade-seed-box {
+  display: flex;
+  align-items: center;
+  background: #0d0720;
+  border: 1.5px solid #6d28d9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.arcade-seed-input {
+  background: transparent;
+  border: none;
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.55rem;
+  width: 95px;
+  text-transform: uppercase;
+}
+
+.btn-arcade-seed {
+  background: #6d28d9;
+  color: #ffffff;
+  border: none;
+  padding: 0.35rem 0.65rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-arcade-seed:hover {
+  background: #7c3aed;
+}
+
+.evaluator-badge {
+  background: var(--neon-pink);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Modals (Rules, Analytics, Gallery, Victory)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 22, 0.75);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+  padding: 1.5rem;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: #171033;
+  border: 3px solid #5b3096;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 620px;
+  padding: 1.75rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: #f8fafc;
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.9) translateY(20px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+.modal-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.modal-close-btn {
+  background: #27164f;
+  border: none;
+  font-size: 1.4rem;
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  background: var(--neon-pink);
+  color: #ffffff;
+}
+
+/* Victory Adaptation Banner */
+.adaptation-card {
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  border: 2px solid;
+}
+
+.adaptation-card.promoted {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+}
+
+.adaptation-card.demoted {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+}
+
+.adaptation-card.maintained {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+}
+
+.modal-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.modal-stat-pill {
+  background: #110a26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.modal-stat-val {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--neon-cyan);
+}
+
+.modal-stat-lbl {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0284c7 0%, #00f2fe 100%);
+  color: #030712;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 242, 254, 0.5);
+}
+
+/* Table styling for Rules and Telemetry */
+.table-wrapper {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.data-table th {
+  background: #130a2a;
+  font-weight: 700;
+  color: var(--neon-cyan);
+}
+
+/* ==========================================================================
+   Match Celebration Popup Modal (User's Reference Image)
+   ========================================================================== */
+.match-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 4, 20, 0.72);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  padding: 1.25rem;
+}
+
+.match-popup-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.match-popup-card {
+  background: #2a204d;
+  border: 2px solid rgba(168, 85, 247, 0.5);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  padding: 2.2rem 2rem 1.8rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(168, 85, 247, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  transform: scale(0.85) translateY(15px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.match-popup-overlay.active .match-popup-card {
+  transform: scale(1) translateY(0);
+}
+
+.match-popup-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  color: #a5b4fc;
+  cursor: pointer;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.match-popup-close-btn:hover {
+  color: #ffffff;
+  transform: scale(1.15);
+}
+
+.match-photo-frame {
+  display: inline-block;
+  padding: 6px;
+  background: #ec4899;
+  outline: 3.5px solid #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.45);
+  margin-bottom: 1.35rem;
+}
+
+#match-popup-img {
+  width: 175px;
+  height: 175px;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+}
+
+.match-popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.match-popup-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.22rem;
+  color: #fde047;
+  line-height: 1.35;
+  text-shadow: 0 2px 10px rgba(253, 224, 71, 0.4);
+}
+
+.match-popup-subtitle {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  color: #c4b5fd;
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Level 2 / Continuous Next Level Cinematic Transition Overlay
+   ========================================================================== */
+.level-transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 3, 18, 0.88);
+  backdrop-filter: blur(14px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 250;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 1.5rem;
+}
+
+.level-transition-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.level-transition-card {
+  background: linear-gradient(135deg, #190f33 0%, #291252 100%);
+  border: 3px solid var(--neon-cyan);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 520px;
+  padding: 2.5rem 2.2rem 2.2rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 242, 254, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  transform: scale(0.85);
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.level-transition-overlay.active .level-transition-card {
+  transform: scale(1);
+}
+
+.level-transition-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  padding: 0.35rem 1.1rem;
+  border-radius: 9999px;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+}
+
+.level-transition-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2.1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fef08a 45%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.45rem;
+}
+
+.level-transition-subtitle {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.45;
+}
+
+.level-transition-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.level-stat-box {
+  background: #100826;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.5rem;
+}
+
+.level-stat-box span {
+  font-family: var(--font-mono);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--neon-cyan);
+  display: block;
+}
+
+.level-stat-box small {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.level-countdown-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 0.65rem;
+}
+
+.level-countdown-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+  border-radius: 9999px;
+  transition: width 3.5s linear;
+}
+
+.level-countdown-text {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: #94a3b8;
+  margin-bottom: 1.25rem;
+}
+
+.level-continue-btn {
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 0.85rem 1.5rem;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 768px) {
+  .arcade-top-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .top-nav-left {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .arcade-scoreboard-banner {
+    justify-content: center;
+  }
+  .card-grid {
+    gap: 0.55rem;
+  }
+}

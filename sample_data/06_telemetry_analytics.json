@@ -1,0 +1,24 @@
+{
+  "scenario": "Scenario 6: Historical Telemetry Analytics & Aggregate Metrics",
+  "request": {
+    "method": "GET",
+    "endpoint": "/api/game/analytics"
+  },
+  "expectedOutput": {
+    "statusCode": 200,
+    "body": {
+      "success": true,
+      "analytics": {
+        "totalSessions": 5,
+        "difficultyDistribution": {
+          "novice": 1,
+          "standard": 3,
+          "advanced": 1
+        },
+        "averageMoves": 16.2,
+        "averageTimeSeconds": 41.4,
+        "averageEfficiency": 55.4
+      }
+    }
+  }
+}

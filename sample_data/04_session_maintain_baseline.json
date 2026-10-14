@@ -1,0 +1,37 @@
+{
+  "scenario": "Scenario 4: Normal Behavior - Baseline Performance Maintenance (15-21 moves & 36-64s)",
+  "request": {
+    "method": "POST",
+    "endpoint": "/api/game/session",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "seed": "DOGE-01",
+      "difficulty": "standard",
+      "moves": 18,
+      "pairs": 8,
+      "elapsedSeconds": 45.0
+    }
+  },
+  "expectedOutput": {
+    "statusCode": 201,
+    "body": {
+      "success": true,
+      "adaptation": {
+        "previousDifficulty": "standard",
+        "nextDifficulty": "standard",
+        "action": "MAINTAIN",
+        "ruleId": "RULE_MAINTAIN_STANDARD",
+        "reasonSummary": "😐 MID TIER DETECTED"
+      },
+      "metrics": {
+        "theoreticalMinMoves": 8,
+        "actualMoves": 18,
+        "pairs": 8,
+        "elapsedSeconds": 45.0,
+        "efficiency": 44
+      }
+    }
+  }
+}

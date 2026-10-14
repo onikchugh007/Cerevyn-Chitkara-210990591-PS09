@@ -1,0 +1,34 @@
+{
+  "scenario": "Scenario 1: Normal Board Generation (Standard 4x4 Grid)",
+  "request": {
+    "method": "GET",
+    "endpoint": "/api/game/new",
+    "queryParams": {
+      "seed": "DOGE-01",
+      "difficulty": "standard"
+    }
+  },
+  "expectedOutput": {
+    "statusCode": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "seed": "DOGE-01",
+        "difficulty": "standard",
+        "totalCards": 16,
+        "pairs": 8,
+        "rows": 4,
+        "cols": 4,
+        "config": {
+          "name": "Dank Meme Matrix (Standard)",
+          "rows": 4,
+          "cols": 4,
+          "pairs": 8,
+          "mismatchDelayMs": 900,
+          "minTargetMoves": 8,
+          "targetMaxSeconds": 40
+        }
+      }
+    }
+  }
+}
